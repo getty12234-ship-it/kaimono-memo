@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="買い物メモ">
+  <meta name="theme-color" content="#4ecca3">
+  <title>買い物メモ</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ヘッダー -->
+  <header>
+    <h1>🛒 買い物メモ</h1>
+    <div class="header-actions">
+      <button id="done-btn" class="icon-btn" title="チェック解除">↩</button>
+      <button id="clear-btn" class="icon-btn" title="クリア">🗑</button>
+    </div>
+  </header>
+
+  <!-- カウンター -->
+  <div class="counter">
+    <span id="counter">0 件</span><span id="done-count"></span>
+  </div>
+
+  <!-- リスト -->
+  <div id="list-container">
+    <div id="item-list"></div>
+    <div id="empty-state" class="empty-state">
+      <div class="icon">🛒</div>
+      <p>マイクボタンを押して<br>買うものを話してください</p>
+    </div>
+  </div>
+
+  <!-- 音声入力エリア -->
+  <div class="mic-area">
+    <div id="mic-hint" class="mic-hint">タップして音声入力</div>
+    <button id="mic-btn">🎤</button>
+    <div class="manual-input-row">
+      <input id="manual-input" type="text" placeholder="テキスト入力…" autocomplete="off"
+             autocorrect="off" autocapitalize="off" spellcheck="false">
+      <button id="add-btn">追加</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- 確認モーダル -->
+<div id="modal" class="modal-overlay">
+  <div class="modal">
+    <h3>確認</h3>
+    <p id="modal-msg"></p>
+    <div class="modal-btns">
+      <button id="modal-cancel" class="btn-cancel">キャンセル</button>
+      <button id="modal-ok"     class="btn-danger">削除</button>
+    </div>
+  </div>
+</div>
+
+<!-- トースト -->
+<div id="toast" class="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
