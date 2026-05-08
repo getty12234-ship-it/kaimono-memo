@@ -22,12 +22,14 @@
     <div class="header-actions">
       <button id="done-btn" class="icon-btn" title="チェック解除">↩</button>
       <button id="clear-btn" class="icon-btn" title="クリア">🗑</button>
+      <button id="settings-btn" class="icon-btn" title="設定">⚙</button>
     </div>
   </header>
 
   <!-- カウンター -->
   <div class="counter">
     <span id="counter">0 件</span><span id="done-count"></span>
+    <span id="sync-status" class="sync-status"></span>
   </div>
 
   <!-- リスト -->
@@ -50,6 +52,48 @@
     </div>
   </div>
 
+</div>
+
+<!-- 設定パネル -->
+<div id="settings-overlay" class="settings-overlay"></div>
+<div id="settings-panel" class="settings-panel">
+  <div class="settings-header">
+    <h2>⚙ 設定</h2>
+    <button id="settings-close" class="icon-btn">✕</button>
+  </div>
+
+  <div class="settings-section">
+    <h3>🔗 ウィジェット連携（GitHub Gist）</h3>
+    <p class="settings-desc">設定するとホーム画面・ロック画面のウィジェットにリストを表示できます。</p>
+
+    <label class="settings-label">GitHub Personal Access Token</label>
+    <div class="pat-input-row">
+      <input type="password" id="pat-input" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" spellcheck="false">
+      <button id="pat-toggle" class="icon-btn" title="表示切替">👁</button>
+    </div>
+    <p class="settings-hint">※ <a href="https://github.com/settings/tokens/new?scopes=gist" target="_blank">こちらで作成</a>（gistスコープのみ選択）</p>
+
+    <button id="pat-save" class="btn-full btn-accent-full">保存して同期</button>
+
+    <div id="gist-info" class="gist-info" style="display:none">
+      <label class="settings-label">Gist ID（ウィジェット設定用）</label>
+      <div class="gist-id-row">
+        <span id="gist-id-display" class="gist-id-text"></span>
+        <button id="gist-id-copy" class="icon-btn" title="コピー">📋</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <h3>📱 Scriptable ウィジェット</h3>
+    <p class="settings-desc">
+      1. App Store で <strong>Scriptable</strong> をインストール<br>
+      2. 下のボタンでスクリプトをダウンロード<br>
+      3. Scriptable にスクリプトを追加<br>
+      4. ウィジェット長押し →「パラメータを編集」に Gist ID を入力
+    </p>
+    <button id="widget-dl" class="btn-full btn-outline-full">📥 widget.js をダウンロード</button>
+  </div>
 </div>
 
 <!-- 確認モーダル -->

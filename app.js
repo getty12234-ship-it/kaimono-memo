@@ -23,9 +23,71 @@ const toast       = document.getElementById('toast');
 const counter     = document.getElementById('counter');
 const doneCount   = document.getElementById('done-count');
 
+// --- Gist同期設定 ---
+let gistCfg = JSON.parse(localStorage.getItem('gistCfg') || 'null') || { pat: '', gistId: '', username: '' };
+let syncTimer = null;
+
+function saveGistCfg() {
+  localStorage.setItem('gistCfg', JSON.stringify(gistCfg));
+}
+
+function setSyncStatus(status) {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  const map = { syncing: '⟳ 同期中', synced: '✓ 同期済み', error: '✗ 同期エラー', '': '' };
+  el.textContent = map[status] ?? '';
+  el.className = `sync-status${status ? ' sync-' + status : ''}`;
+}
+
+async function syncToGist() {
+  if (!gistCfg.pat) return;
+  setSyncStatus('syncing');
+  const content = JSON.stringify(items, null, 2);
+  const headers = {
+    'Authorization': `token ${gistCfg.pat}`,
+    'Accept': 'application/vnd.github+json',
+    'Content-Type': 'application/json'
+  };
+  try {
+    if (!gistCfg.gistId) {
+      const res = await fetch('https://api.github.com/gists', {
+        method: 'POST', headers,
+        body: JSON.stringify({
+          description: '買い物メモ - Kaimono Memo',
+          public: false,
+          files: { 'kaimono-memo.json': { content } }
+        })
+      });
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+      gistCfg.gistId = data.id;
+      gistCfg.username = data.owner?.login || '';
+      saveGistCfg();
+      updateGistInfo();
+    } else {
+      const res = await fetch(`https://api.github.com/gists/${gistCfg.gistId}`, {
+        method: 'PATCH', headers,
+        body: JSON.stringify({ files: { 'kaimono-memo.json': { content } } })
+      });
+      if (!res.ok) throw new Error(res.status);
+    }
+    setSyncStatus('synced');
+    setTimeout(() => setSyncStatus(''), 3000);
+  } catch(e) {
+    console.error('Gist同期エラー:', e);
+    setSyncStatus('error');
+  }
+}
+
+function scheduleSync() {
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(syncToGist, 1500);
+}
+
 // --- 永続化 ---
 function save() {
   localStorage.setItem('kaimono', JSON.stringify(items));
+  scheduleSync();
 }
 
 // --- レンダリング ---
@@ -308,8 +370,77 @@ function showToast(msg) {
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
 }
 
+// --- 設定パネル ---
+const settingsBtn     = document.getElementById('settings-btn');
+const settingsPanel   = document.getElementById('settings-panel');
+const settingsOverlay = document.getElementById('settings-overlay');
+const settingsClose   = document.getElementById('settings-close');
+const patInput        = document.getElementById('pat-input');
+const patToggle       = document.getElementById('pat-toggle');
+const patSave         = document.getElementById('pat-save');
+const gistInfo        = document.getElementById('gist-info');
+const gistIdDisplay   = document.getElementById('gist-id-display');
+const gistIdCopy      = document.getElementById('gist-id-copy');
+const widgetDl        = document.getElementById('widget-dl');
+
+function openSettings() {
+  settingsPanel.classList.add('show');
+  settingsOverlay.classList.add('show');
+  patInput.value = gistCfg.pat;
+  updateGistInfo();
+}
+
+function closeSettings() {
+  settingsPanel.classList.remove('show');
+  settingsOverlay.classList.remove('show');
+}
+
+function updateGistInfo() {
+  if (gistCfg.gistId) {
+    gistInfo.style.display = 'block';
+    gistIdDisplay.textContent = gistCfg.gistId;
+  } else {
+    gistInfo.style.display = 'none';
+  }
+}
+
+settingsBtn.addEventListener('click', openSettings);
+settingsClose.addEventListener('click', closeSettings);
+settingsOverlay.addEventListener('click', closeSettings);
+
+patToggle.addEventListener('click', () => {
+  patInput.type = patInput.type === 'password' ? 'text' : 'password';
+});
+
+patSave.addEventListener('click', async () => {
+  const pat = patInput.value.trim();
+  if (!pat) { showToast('トークンを入力してください'); return; }
+  gistCfg.pat = pat;
+  if (pat !== gistCfg.pat) gistCfg.gistId = '';
+  saveGistCfg();
+  patSave.textContent = '同期中…';
+  patSave.disabled = true;
+  await syncToGist();
+  patSave.textContent = '保存して同期';
+  patSave.disabled = false;
+  updateGistInfo();
+  if (gistCfg.gistId) showToast('Gistに同期しました');
+});
+
+gistIdCopy.addEventListener('click', () => {
+  navigator.clipboard?.writeText(gistCfg.gistId).then(() => showToast('Gist IDをコピーしました'));
+});
+
+widgetDl.addEventListener('click', () => {
+  const a = document.createElement('a');
+  a.href = 'widget.js';
+  a.download = 'KaimonoMemo.js';
+  a.click();
+});
+
 // --- 初期化 ---
 render();
+if (gistCfg.pat && gistCfg.gistId) setSyncStatus('');
 
 // Service Worker 登録
 if ('serviceWorker' in navigator) {
