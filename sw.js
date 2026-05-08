@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kaimono-memo-v1';
+const CACHE_NAME = 'kaimono-memo-v3';
 const URLS = ['./', 'index.html', 'style.css', 'app.js', 'manifest.json'];
 
 self.addEventListener('install', e => {

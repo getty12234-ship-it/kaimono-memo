@@ -4,8 +4,9 @@
 //   ウィジェット長押し → 「ウィジェットを編集」→「パラメータ」に Gist ID を貼り付ける
 // ─────────────────────────────────────
 
-const GIST_ID  = args.widgetParameter?.trim() || "";
-const APP_URL  = "https://getty12234-ship-it.github.io/kaimono-memo/";
+const GIST_ID   = args.widgetParameter?.trim() || "";
+const APP_URL   = "https://getty12234-ship-it.github.io/kaimono-memo/";
+const VOICE_URL = APP_URL + "?voice=1"; // タップで即音声入力
 const CACHE_KEY = "kaimono_widget_v1";
 
 // カラー定義
@@ -43,10 +44,10 @@ async function fetchItems() {
 // ----- ホーム画面ウィジェット -----
 function buildHomeWidget(items, family) {
   const w = new ListWidget();
-  w.url = APP_URL;
+  w.url = VOICE_URL;
   w.backgroundColor = C.bg;
   w.setPadding(14, 14, 10, 14);
-  w.refreshAfterDate = new Date(Date.now() + 20 * 60 * 1000);
+  w.refreshAfterDate = new Date(Date.now() + 5 * 60 * 1000);
 
   const maxRows = family === "small" ? 4 : family === "medium" ? 5 : 10;
   const fontSize = family === "small" ? 12 : 13;
@@ -139,8 +140,8 @@ function buildHomeWidget(items, family) {
 // ----- ロック画面ウィジェット -----
 function buildLockWidget(items, family) {
   const w = new ListWidget();
-  w.url = APP_URL;
-  w.refreshAfterDate = new Date(Date.now() + 20 * 60 * 1000);
+  w.url = VOICE_URL;
+  w.refreshAfterDate = new Date(Date.now() + 5 * 60 * 1000);
 
   const pending = items ? items.filter(i => !i.done) : [];
 

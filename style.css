@@ -291,6 +291,115 @@ header h1 {
 .sync-synced  { color: var(--accent); }
 .sync-error   { color: var(--accent2); }
 
+/* クイックスタートオーバーレイ */
+.quick-start {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  cursor: pointer;
+  padding: 32px 24px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.qs-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.qs-mic-wrap {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qs-mic-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+  animation: qs-ring 1.8s ease-in-out infinite;
+}
+
+@keyframes qs-ring {
+  0%   { transform: scale(0.85); opacity: 0.8; }
+  50%  { transform: scale(1.1);  opacity: 0.3; }
+  100% { transform: scale(0.85); opacity: 0.8; }
+}
+
+.qs-mic {
+  font-size: 64px;
+  animation: qs-bounce 1.8s ease-in-out infinite;
+  line-height: 1;
+}
+
+@keyframes qs-bounce {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.08); }
+}
+
+.qs-title {
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--accent);
+  text-align: center;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.qs-hint {
+  font-size: 15px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+/* オーバーレイ下部: 現在のリストをプレビュー表示 */
+.qs-list {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.qs-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--item-bg);
+  border-radius: 12px;
+  padding: 11px 14px;
+  font-size: 15px;
+}
+
+.qs-item-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.qs-item-text { flex: 1; color: var(--text); }
+.qs-item-qty  { font-size: 12px; color: var(--accent); }
+
+.qs-more {
+  font-size: 13px;
+  color: var(--text-dim);
+  text-align: center;
+  padding: 4px 0;
+}
+
 /* 設定パネル */
 .settings-overlay {
   position: fixed;

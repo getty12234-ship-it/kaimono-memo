@@ -438,8 +438,51 @@ widgetDl.addEventListener('click', () => {
   a.click();
 });
 
+// --- クイックスタート（ウィジェットから起動時） ---
+function initQuickStart() {
+  const params = new URLSearchParams(location.search);
+  if (params.get('voice') !== '1') return;
+
+  // URLからパラメータを除去（再読み込み時に再表示しないため）
+  history.replaceState({}, '', location.pathname);
+
+  const overlay = document.getElementById('quick-start');
+  const qsList  = document.getElementById('qs-list');
+
+  // 未完了アイテムをオーバーレイ下部に表示
+  const pending = items.filter(i => !i.done).slice(0, 4);
+  if (pending.length > 0) {
+    pending.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'qs-item';
+      el.innerHTML = `
+        <div class="qs-item-dot"></div>
+        <span class="qs-item-text">${escHtml(item.text)}</span>
+        ${item.qty > 1 ? `<span class="qs-item-qty">×${item.qty}</span>` : ''}
+      `;
+      qsList.appendChild(el);
+    });
+    const total = items.filter(i => !i.done).length;
+    if (total > 4) {
+      const more = document.createElement('p');
+      more.className = 'qs-more';
+      more.textContent = `… あと ${total - 4} 件`;
+      qsList.appendChild(more);
+    }
+  }
+
+  overlay.style.display = 'flex';
+
+  // タップで即音声開始
+  overlay.addEventListener('click', () => {
+    overlay.style.display = 'none';
+    startListening();
+  }, { once: true });
+}
+
 // --- 初期化 ---
 render();
+initQuickStart();
 if (gistCfg.pat && gistCfg.gistId) setSyncStatus('');
 
 // Service Worker 登録
