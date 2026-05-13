@@ -439,6 +439,7 @@ function initSpeech() {
   recognition.lang = 'ja-JP';
   recognition.interimResults = true;
   recognition.maxAlternatives = 1;
+  recognition.continuous = true; // Chrome対応: 自動停止しない
 
   recognition.onstart = () => {
     isListening = true;
@@ -532,6 +533,15 @@ manualInput.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     addItem(manualInput.value);
     manualInput.value = '';
+  }
+});
+
+// キーボードショートカット（デスクトップ）
+document.addEventListener('keydown', e => {
+  // Spaceでマイク ON/OFF（入力欄にフォーカスがないとき）
+  if (e.code === 'Space' && document.activeElement !== manualInput) {
+    e.preventDefault();
+    if (isListening) stopListening(); else startListening();
   }
 });
 
@@ -706,6 +716,31 @@ function initQuickStart() {
     startListening();
   }, { once: true });
 }
+
+// --- PWAインストール（Chrome対応）---
+let deferredInstallPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  // インストールボタンを表示
+  const btn = document.getElementById('install-btn');
+  if (btn) btn.style.display = 'flex';
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  const btn = document.getElementById('install-btn');
+  if (btn) btn.style.display = 'none';
+  showToast('✅ インストール完了！');
+});
+
+document.getElementById('install-btn')?.addEventListener('click', async () => {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  const { outcome } = await deferredInstallPrompt.userChoice;
+  if (outcome === 'accepted') deferredInstallPrompt = null;
+});
 
 // --- 初期化 ---
 render();

@@ -67,7 +67,26 @@ header h1 {
   transition: color 0.2s, background 0.2s;
 }
 
+.icon-btn:hover { color: var(--text); }
 .icon-btn:active { background: rgba(255,255,255,0.08); color: var(--text); }
+
+/* PCインストールボタン（Chrome PWA） */
+.install-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(78,204,163,0.15);
+  border: 1px solid rgba(78,204,163,0.4);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.install-btn:hover { background: rgba(78,204,163,0.25); }
 
 /* カウンター */
 .counter {
@@ -517,6 +536,38 @@ header h1 {
   font-size: 13px;
   color: var(--accent);
   word-break: break-all;
+}
+
+/* デスクトップ向け調整 */
+@media (min-width: 600px) {
+  body {
+    background: var(--bg);
+    padding: 20px;
+  }
+
+  #app {
+    max-width: 480px;
+    height: calc(100dvh - 40px);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    border: 1px solid rgba(78,204,163,0.1);
+  }
+
+  #mic-btn {
+    width: 72px;
+    height: 72px;
+    font-size: 28px;
+  }
+
+  .item-delete { opacity: 0.5; }
+
+  /* デスクトップではキーボードショートカットヒントを表示 */
+  .mic-hint:not(.transcript)::after {
+    content: ' (Space)';
+    font-size: 11px;
+    opacity: 0.45;
+  }
 }
 
 /* トースト通知 */
