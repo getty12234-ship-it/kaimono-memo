@@ -1,0 +1,6 @@
+Pillow==10.0.0
+numpy==1.24.3
+opencv-python==4.8.0.76
+requests==2.31.0
+colorsys
+json5==0.9.14
